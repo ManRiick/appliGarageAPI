@@ -17,6 +17,7 @@ class Vehicules extends Model
         'immatriculation',
         'annee',
         'kilometrage',
+        'user_id',
     ];
     protected $table = 'vehicules';
 }

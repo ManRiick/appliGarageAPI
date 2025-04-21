@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('immatriculation')->unique();
             $table->integer('annee');
             $table->string('kilometrage');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

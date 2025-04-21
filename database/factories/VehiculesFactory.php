@@ -22,6 +22,7 @@ class VehiculesFactory extends Factory
             'immatriculation' => strtoupper(Str::random(7)),
             'annee' => $this->faker->year(),
             'kilometrage' => $this->faker->numberBetween(10000, 200000),
+            'user_id' => $this->faker->randomNumber(),
         ];
     }
 
