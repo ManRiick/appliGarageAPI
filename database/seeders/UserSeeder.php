@@ -20,9 +20,16 @@ class UserSeeder extends Seeder
     {
         User::factory()->create([
             'name' => 'Admin',
-            'email' => 'test@email.com',
+            'email' => 'admin@mail.com',
             'is_garage' => true,
-            'password' => Hash::make('admin'), // password
+            'password' => Hash::make('test'), 
+            'remember_token' => Str::random(10),
+            ]);
+         User::factory()->create([
+            'name' => 'Client',
+            'email' => 'client@mail.com',
+            'is_garage' => false,
+            'password' => Hash::make('test'),
             'remember_token' => Str::random(10),
             ]);
         // Use the User factory to create 10 users

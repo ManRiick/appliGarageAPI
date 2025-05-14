@@ -12,6 +12,8 @@ Route::post('/vehicules', [VehiculeController::class, 'index']);
 Route::post('/factures', [FactureController::class, 'index']);
 Route::post('/taches', [TacheController::class, 'index']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
+
 
 Route::post('/ping', function () {
     return response()->json(['message' => 'Pong!']);
