@@ -24,5 +24,6 @@ class Taches extends Model
     {
         return $this->belongsTo(Vehicules::class, 'vehicule_id');
     }
-   
+
+
 }

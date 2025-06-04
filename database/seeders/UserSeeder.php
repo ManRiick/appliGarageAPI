@@ -32,8 +32,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('test'),
             'remember_token' => Str::random(10),
             ]);
-        // Use the User factory to create 10 users
-        // You can adjust the number of users as needed
+        // 
         User::factory(10)->create();
 }
 }
