@@ -20,7 +20,7 @@ class TacheController extends Controller
         // Return the tasks as a JSON response
         return response()->json($tasks);
     }
-    // ✅ Créer une tâche
+    // creation de tache
 public function store(Request $request)
 {
     $user = auth()->user();
@@ -40,7 +40,7 @@ public function store(Request $request)
     return response()->json($tache, 201);
 }
 
-// ✏️ Modifier une tâche
+// modif de tache
 public function update(Request $request, $id)
 {
     $user = auth()->user();
@@ -57,7 +57,7 @@ public function update(Request $request, $id)
     return response()->json($tache);
 }
 
-// ❌ Supprimer une tâche
+// suppression de tache
 public function destroy($id)
 {
     $user = auth()->user();
