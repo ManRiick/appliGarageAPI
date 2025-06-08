@@ -7,19 +7,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class Vehicules extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
-        'marque',
-        'modele',
-        'immatriculation',
-        'annee',
-        'kilometrage',
-        'user_id',
-    ];
+        'marque', 'modele', 'immatriculation', 'annee', 'kilometrage', 'user_id'];
 
+    // Un véhicule appartient à un utilisateur
     public function user()
     {
         return $this->belongsTo(User::class);
     }
+
+    // Un véhicule a plusieurs tâches
+    public function taches()
+    {
+        return $this->hasMany(Taches::class);
+    }
+
 }

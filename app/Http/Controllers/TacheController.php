@@ -71,6 +71,7 @@ public function destroy($id)
     return response()->json(['message' => 'Tâche supprimée avec succès']);
 }
 
+// recuperation des taches par vehicule
 public function getTachesByVehicule(Request $request, $vehicule_id)
 {
     $vehicule = Vehicules::find($vehicule_id);
@@ -87,7 +88,54 @@ public function getTachesByVehicule(Request $request, $vehicule_id)
     ]);
 }
 
+// API POST pour lecture + modification des tâches et utilisateur liés à un véhicule
+public function postTachesAndUserByVehicule(Request $request, $vehicule_id)
+{
+    $vehicule = Vehicules::find($vehicule_id);
 
+    if (!$vehicule) {
+        return response()->json(['message' => 'Véhicule non trouvé'], 404);
+    }
 
+    // Mise à jour du véhicule si des données sont envoyées
+    if ($request->has('vehicule')) {
+        $vehicule->update($request->input('vehicule'));
+    }
+
+    // Récupération et mise à jour de l'utilisateur si nécessaire
+    $user = User::find($vehicule->user_id);
+    if (!$user) {
+        return response()->json(['message' => 'Utilisateur non trouvé'], 404);
+    }
+    if ($request->has('user')) {
+        $user->update($request->input('user'));
+    }
+
+    // Mise à jour ou ajout des tâches
+    if ($request->has('taches') && is_array($request->input('taches'))) {
+        foreach ($request->input('taches') as $tacheData) {
+            if (isset($tacheData['id'])) {
+                // Mise à jour d'une tâche existante
+                $tache = Taches::find($tacheData['id']);
+                if ($tache && $tache->vehicule_id == $vehicule_id) {
+                    $tache->update($tacheData);
+                }
+            } else {
+                // Création d'une nouvelle tâche
+                $tacheData['vehicule_id'] = $vehicule_id;
+                Taches::create($tacheData);
+            }
+        }
+    }
+
+    // Récupérer les données mises à jour
+    $taches = Taches::where('vehicule_id', $vehicule_id)->get();
+
+    return response()->json([
+        'vehicule' => $vehicule,
+        'user' => $user,
+        'taches' => $taches
+    ]);
+}
 
 }

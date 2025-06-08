@@ -58,4 +58,11 @@ class VehiculeController extends Controller
 
         return response()->json(['message' => 'Véhicule supprimé']);
     }
+
+    // recuperer liste des vehicules avec leur user
+    public function getVehiculesWithUser(){
+        $vehicules = Vehicules::with('user')->get();
+
+        return response()->json($vehicules);
+    }
 }

@@ -46,4 +46,9 @@ class User extends Authenticatable
             'is_garage' => 'boolean',
         ];
     }
+
+    public function vehicules()
+    {
+        return $this->hasMany(Vehicules::class);
+    }
 }

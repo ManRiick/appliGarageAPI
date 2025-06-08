@@ -20,6 +20,7 @@ class Taches extends Model
         'statut',
     ];
     protected $table = 'taches';
+
     public function vehicule()
     {
         return $this->belongsTo(Vehicules::class, 'vehicule_id');
