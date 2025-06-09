@@ -49,11 +49,11 @@
     <div class="container">
         <h1>Bienvenue sur l'API d'appliGarage</h1>
         <p>
-            Cette API permet de gérer les services, rendez-vous et clients de votre garage.<br>
-            Utilisez les routes ci-dessous pour interagir avec l'application.
+            Cette API permet de gérer les services de votre garage.<br>
+            
         </p>
         <p style="margin-top: 40px; color: #aaa; font-size: 0.9em;">
-            &copy; {{ date('Y') }} GarageAPI. Tous droits réservés.
+            &copy; {{ date('Y') }} GarageAPI.
         </p>
     </div>
 </body>

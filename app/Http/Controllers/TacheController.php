@@ -12,63 +12,31 @@ use App\Models\Taches;
 class TacheController extends Controller
 {
     //
-    public function index(Request $request)
-    {
-        // Get all tasks
-        $tasks = Taches::all();
-
-        // Return the tasks as a JSON response
-        return response()->json($tasks);
-    }
-    // creation de tache
-public function store(Request $request)
+    public function indexInfo()
 {
-    $user = auth()->user();
-    if (!$user->is_garage) {
-        return response()->json(['message' => 'Accès refusé'], 403);
-    }
+    $taches = Taches::with(['vehicule.user'])
+        ->orderByDesc('id')
+        ->get();
 
-    $validated = $request->validate([
-        'description' => 'required|string',
-        'prix' => 'required|numeric',
-        'duree_jour' => 'required|integer',
-        'vehicule_id' => 'required|exists:vehicules,id',
-        'statut' => 'required|string',
-    ]);
+    $result = $taches->map(function ($tache) {
+        return [
+            'tache' => $tache,
+            'vehicule' => $tache->vehicule,
+            'user' => $tache->vehicule?->user
+        ];
+    });
 
-    $tache = Taches::create($validated);
-    return response()->json($tache, 201);
+    return response()->json($result);
 }
 
-// modif de tache
-public function update(Request $request, $id)
-{
-    $user = auth()->user();
-    if (!$user->is_garage) {
-        return response()->json(['message' => 'Accès refusé'], 403);
-    }
-
-    $tache = Taches::findOrFail($id);
-
-    $tache->update($request->only([
-        'description', 'prix', 'duree_jour', 'statut'
-    ]));
-
-    return response()->json($tache);
-}
 
 // suppression de tache
 public function destroy($id)
 {
-    $user = auth()->user();
-    if (!$user->is_garage) {
-        return response()->json(['message' => 'Accès refusé'], 403);
-    }
-
     $tache = Taches::findOrFail($id);
     $tache->delete();
+    return response()->json(['message' => 'Tâche supprimée']);
 
-    return response()->json(['message' => 'Tâche supprimée avec succès']);
 }
 
 // recuperation des taches par vehicule
@@ -137,5 +105,73 @@ public function postTachesAndUserByVehicule(Request $request, $vehicule_id)
         'taches' => $taches
     ]);
 }
+public function getTacheWithVehiculeAndUser($id)
+{
+    $tache = Taches::with(['vehicule.user'])->find($id);
+
+    if (!$tache) {
+        return response()->json(['error' => 'Tâche non trouvée'], 404);
+    }
+
+    // Renvoie juste la tâche avec véhicule et user inclus
+    return response()->json($tache);
+}
+
+// API POST pour lecture + modification des vehicules et utilisateur liés à un tache
+
+public function postUpdateTacheById(Request $request, $tache_id)
+{
+    $tache = Taches::find($tache_id);
+
+    if (!$tache) {
+        return response()->json(['message' => 'Tâche non trouvée'], 404);
+    }
+
+    // Mise à jour des champs de la tâche (depuis taches[0])
+    if ($request->has('taches') && is_array($request->taches) && count($request->taches) > 0) {
+        $tache->update($request->taches[0]);
+    }
+
+    // Mise à jour du véhicule et association
+    if ($request->has('vehicule') && isset($request->vehicule['id'])) {
+        $vehicule = Vehicules::find($request->vehicule['id']);
+        if ($vehicule) {
+            $tache->vehicule_id = $vehicule->id;
+            $tache->save();
+
+            if (!empty($request->vehicule)) {
+                $vehicule->update($request->vehicule);
+            }
+        } else {
+            return response()->json(['message' => 'Véhicule non trouvé'], 404);
+        }
+    }
+
+    // Mise à jour du user associé au véhicule
+    if ($request->has('user') && isset($request->user['id'])) {
+        $user = User::find($request->user['id']);
+        if ($user) {
+            $vehicule = $tache->vehicule;
+            if ($vehicule) {
+                $vehicule->user_id = $user->id;
+                $vehicule->save();
+            }
+
+            if (!empty($request->user)) {
+                $user->update($request->user);
+            }
+        } else {
+            return response()->json(['message' => 'Utilisateur non trouvé'], 404);
+        }
+    }
+
+    return response()->json([
+        'message' => 'Tâche mise à jour avec succès',
+        'tache' => $tache->load('vehicule.user')
+    ]);
+}
+
+
+
 
 }

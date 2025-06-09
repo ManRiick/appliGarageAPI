@@ -65,4 +65,11 @@ class VehiculeController extends Controller
 
         return response()->json($vehicules);
     }
+    
+    // api getallvehicules pour une liste de tt les vehicules
+    public function getAllVehicules(){
+        $vehicules = Vehicules::all();
+
+        return response()->json($vehicules);
+    }
 }
